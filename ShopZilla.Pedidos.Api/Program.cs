@@ -1,8 +1,12 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ShopZilla.Pedidos.Api;
 using ShopZilla.Pedidos.Api.Dal;
+using ShopZilla.Pedidos.Api.Services;
 using System.Reflection;
+using System.Text;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,9 +14,28 @@ var builder = WebApplication.CreateBuilder(args);
 AdicionarSwaggerConfigurado();
 AdicionarControllersConfigurado();
 
+var key = Encoding.ASCII.GetBytes(builder.Configuration["JwtSettings:SecretKey"]);
+
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            IssuerSigningKey = new SymmetricSecurityKey(key),
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero //Define o tempo de delay para cálculo de expiração como 0
+        };
+    });
+
+builder.Services.AddAuthorization();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddDbContext<PedidosDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("PedidosDb")));
 builder.Services.AddScoped<PedidosDal>();
+builder.Services.AddScoped<UsuariosDal>();
+builder.Services.AddSingleton(new TokenService(builder.Configuration["JwtSettings:SecretKey"]));
 
 var app = builder.Build();
 
@@ -23,6 +46,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
@@ -40,6 +64,34 @@ void AdicionarSwaggerConfigurado()
             {
                 Name = "Felipe Toscano",
                 Email = "felipetoscano02@gmail.com"
+            }
+        });
+
+        options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+            Description =
+            "JWT Authorization Header - utilizado com Bearer Authentication.\r\n\r\n" +
+            "Digite 'Bearer' [espaço] e então seu token no campo abaixo.\r\n\r\n" +
+            "Exemplo (informar sem as aspas): 'Bearer 12345abcdef'",
+            Name = "Authorization",
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.ApiKey,
+            Scheme = "Bearer",
+            BearerFormat = "JWT",
+        });
+
+        options.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                },
+                Array.Empty<string>()
             }
         });
 

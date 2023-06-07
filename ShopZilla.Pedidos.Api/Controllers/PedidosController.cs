@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ShopZilla.Pedidos.Api.Dal;
 using ShopZilla.Pedidos.Api.Entities;
 
 namespace ShopZilla.Pedidos.Api.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class PedidosController : ControllerBase
