@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ShopZilla.Pedidos.Api.Entidades;
+using ShopZilla.Pedidos.Api.Entities;
 
 namespace ShopZilla.Pedidos.Api
 {
@@ -7,6 +7,7 @@ namespace ShopZilla.Pedidos.Api
     {
         public DbSet<PedidoEntity> Pedidos { get; set; }
         public DbSet<ProdutoEntity> Produtos { get; set; }
+        public DbSet<UsuarioEntity> Usuarios { get; set; }
 
         public PedidosDbContext(DbContextOptions<PedidosDbContext> options) : base(options) { }
 

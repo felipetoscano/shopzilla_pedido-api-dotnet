@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using ShopZilla.Pedidos.Api.Dal;
-using ShopZilla.Pedidos.Api.Entidades;
+using ShopZilla.Pedidos.Api.Entities;
 
 namespace ShopZilla.Pedidos.Api.Controllers
 {

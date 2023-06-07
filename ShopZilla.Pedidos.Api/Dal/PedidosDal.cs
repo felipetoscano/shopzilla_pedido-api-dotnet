@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ShopZilla.Pedidos.Api.Entidades;
+using ShopZilla.Pedidos.Api.Entities;
 
 namespace ShopZilla.Pedidos.Api.Dal
 {
