@@ -18,6 +18,11 @@ namespace ShopZilla.Pedidos.Api.Controllers
             _tokenService = tokenService;
         }
 
+        /// <summary>
+        /// Autentica um novo usuário, retornando o JWT para a utilização nas demais chamadas
+        /// </summary>
+        /// <param name="usuario"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult Autenticar([FromBody] UsuarioEntity usuario)
         {

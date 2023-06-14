@@ -1,0 +1,39 @@
+﻿using Confluent.Kafka;
+using ShopZilla.Pedidos.Api.Entities;
+using ShopZilla.Pedidos.Api.Models;
+using System.Text.Json;
+
+namespace ShopZilla.Pedidos.Api.Services
+{
+    public class KafkaProducerService
+    {
+        private readonly ConnectionStrings _connectionStrings;
+
+        public KafkaProducerService(ConnectionStrings connectionStrings)
+        {
+            _connectionStrings = connectionStrings;
+        }
+
+        public async void AdicionarPedido(PedidoEntity pedido)
+        {
+            var config = new ProducerConfig 
+            { 
+                BootstrapServers = _connectionStrings.Kafka
+            };
+
+            using (var producer = new ProducerBuilder<Null, string>(config).Build())
+            {
+                try
+                {
+                    var pedidoSerializado = JsonSerializer.Serialize(pedido);
+                    var mensagem = new Message<Null, string>() { Value = pedidoSerializado };
+                    var response = await producer.ProduceAsync("NOVO_PEDIDO", mensagem);
+                }
+                catch (ProduceException<Null, string> e)
+                {
+                    Console.WriteLine($"Erro no envio: {e.Error.Reason}");
+                }
+            }
+        }
+    }
+}

@@ -4,7 +4,9 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ShopZilla.Pedidos.Api;
 using ShopZilla.Pedidos.Api.Dal;
+using ShopZilla.Pedidos.Api.Models;
 using ShopZilla.Pedidos.Api.Services;
+using ShopZilla.Pedidos.Api.Services.BackgroundServices;
 using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -32,10 +34,8 @@ builder.Services
 
 builder.Services.AddAuthorization();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddDbContext<PedidosDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("PedidosDb")));
-builder.Services.AddScoped<PedidosDal>();
-builder.Services.AddScoped<UsuariosDal>();
-builder.Services.AddSingleton(new TokenService(builder.Configuration["JwtSettings:SecretKey"]));
+
+AdicionarInjecaoDeDependencias();
 
 var app = builder.Build();
 
@@ -106,4 +106,16 @@ void AdicionarControllersConfigurado()
     {
         options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
     });
+}
+
+void AdicionarInjecaoDeDependencias()
+{
+    builder.Services.AddDbContext<PedidosDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("PedidosDb")));
+    builder.Services.AddSingleton(builder.Configuration.GetSection(nameof(JwtSettings)).Get<JwtSettings>());
+    builder.Services.AddSingleton(builder.Configuration.GetSection(nameof(ConnectionStrings)).Get<ConnectionStrings>());
+    builder.Services.AddSingleton<TokenService>();
+    builder.Services.AddScoped<PedidosDal>();
+    builder.Services.AddScoped<UsuariosDal>();
+    builder.Services.AddScoped<KafkaProducerService>();
+    builder.Services.AddHostedService<KafkaConsumerService>();
 }

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ShopZilla.Pedidos.Api.Dal;
 using ShopZilla.Pedidos.Api.Entities;
+using ShopZilla.Pedidos.Api.Services;
 
 namespace ShopZilla.Pedidos.Api.Controllers
 {
@@ -11,10 +12,12 @@ namespace ShopZilla.Pedidos.Api.Controllers
     public class PedidosController : ControllerBase
     {
         private readonly PedidosDal _pedidosDal;
+        private readonly KafkaProducerService _kafkaService;
 
-        public PedidosController(PedidosDal pedidosDal)
+        public PedidosController(PedidosDal pedidosDal, KafkaProducerService kafkaService)
         {
             _pedidosDal = pedidosDal;
+            _kafkaService = kafkaService;
         }
 
         /// <summary>
@@ -51,6 +54,7 @@ namespace ShopZilla.Pedidos.Api.Controllers
         public ActionResult CriarPedido([FromBody] PedidoEntity pedido)
         {
             _pedidosDal.CriarPedido(pedido);
+            _kafkaService.AdicionarPedido(pedido);
 
             return Ok();
         }

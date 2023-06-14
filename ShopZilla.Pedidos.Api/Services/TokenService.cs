@@ -1,5 +1,6 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using ShopZilla.Pedidos.Api.Entities;
+using ShopZilla.Pedidos.Api.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -8,17 +9,17 @@ namespace ShopZilla.Pedidos.Api.Services
 {
     public class TokenService
     {
-        private readonly string _secretKey;
+        private readonly JwtSettings _jwtSettings;
 
-        public TokenService(string secretKey)
+        public TokenService(JwtSettings jwtSettings)
         {
-            _secretKey = secretKey; 
+            _jwtSettings = jwtSettings; 
         }
 
         public string GerarTokenDoUsuario(UsuarioEntity usuario)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_secretKey);
+            var key = Encoding.ASCII.GetBytes(_jwtSettings.SecretKey);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]
