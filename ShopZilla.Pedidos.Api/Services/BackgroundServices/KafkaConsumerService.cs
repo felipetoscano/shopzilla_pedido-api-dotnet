@@ -26,22 +26,26 @@ namespace ShopZilla.Pedidos.Api.Services.BackgroundServices
             };
 
             var consumidor = new ConsumerBuilder<Ignore, string>(config).Build();
-            consumidor.Subscribe("NOVO_PEDIDO");
+            consumidor.Subscribe("CONFIRMACAO_PEDIDO");
 
             try
             {
                 Task.Run(() =>
                 {
+                    Console.WriteLine("Consumo iniciado");
                     while (!cancellationToken.IsCancellationRequested)
                     {
                         var mensagem = consumidor.Consume(cancellationToken);
                         var pedido = JsonSerializer.Deserialize<PedidoEntity>(mensagem.Message.Value);
 
-                        pedido.Status = "APROVADO";
+                        var pedidoProcessado = ProcessarPedido(pedido);
 
                         using var scope = _serviceProvider.CreateScope();
                         var pedidosDal = scope.ServiceProvider.GetRequiredService<PedidosDal>();
-                        pedidosDal.AlterarPedido(pedido.Id, pedido);
+                        pedidosDal.AlterarPedido(pedidoProcessado.Id, pedidoProcessado);
+                        pedidosDal.SalvarAlteracoes();
+
+                        Console.WriteLine("Registro da fila consumido com sucesso");
                     }
                 });
             }
@@ -51,6 +55,20 @@ namespace ShopZilla.Pedidos.Api.Services.BackgroundServices
             }
             
             return Task.CompletedTask;
+        }
+
+        private PedidoEntity ProcessarPedido(PedidoEntity pedido)
+        {
+            if (pedido.FoiAprovado())
+            {
+                pedido.EntregarPedido();
+            }
+            else if (pedido.FoiRecusado())
+            {
+                pedido.CancelarPedido();
+            }
+
+            return pedido;
         }
 
         public Task StopAsync(CancellationToken cancellationToken)

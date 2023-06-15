@@ -12,9 +12,9 @@ namespace ShopZilla.Pedidos.Api.Controllers
     public class PedidosController : ControllerBase
     {
         private readonly PedidosDal _pedidosDal;
-        private readonly KafkaProducerNovoPedidoService _kafkaService;
+        private readonly KafkaProducerService _kafkaService;
 
-        public PedidosController(PedidosDal pedidosDal, KafkaProducerNovoPedidoService kafkaService)
+        public PedidosController(PedidosDal pedidosDal, KafkaProducerService kafkaService)
         {
             _pedidosDal = pedidosDal;
             _kafkaService = kafkaService;

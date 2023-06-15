@@ -28,6 +28,8 @@ namespace ShopZilla.Pedidos.Api.Services
                     var pedidoSerializado = JsonSerializer.Serialize(pedido);
                     var mensagem = new Message<Null, string>() { Value = pedidoSerializado };
                     var response = await producer.ProduceAsync("NOVO_PEDIDO", mensagem);
+
+                    Console.WriteLine("Registro da fila adicionado com sucesso");
                 }
                 catch (ProduceException<Null, string> e)
                 {
