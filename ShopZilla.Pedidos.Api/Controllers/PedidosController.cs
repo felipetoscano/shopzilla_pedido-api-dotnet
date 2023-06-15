@@ -12,9 +12,9 @@ namespace ShopZilla.Pedidos.Api.Controllers
     public class PedidosController : ControllerBase
     {
         private readonly PedidosDal _pedidosDal;
-        private readonly KafkaProducerService _kafkaService;
+        private readonly KafkaProducerNovoPedidoService _kafkaService;
 
-        public PedidosController(PedidosDal pedidosDal, KafkaProducerService kafkaService)
+        public PedidosController(PedidosDal pedidosDal, KafkaProducerNovoPedidoService kafkaService)
         {
             _pedidosDal = pedidosDal;
             _kafkaService = kafkaService;
@@ -54,6 +54,8 @@ namespace ShopZilla.Pedidos.Api.Controllers
         public ActionResult CriarPedido([FromBody] PedidoEntity pedido)
         {
             _pedidosDal.CriarPedido(pedido);
+            _pedidosDal.SalvarAlteracoes();
+
             _kafkaService.AdicionarPedido(pedido);
 
             return Ok();
@@ -69,6 +71,7 @@ namespace ShopZilla.Pedidos.Api.Controllers
         public ActionResult AlterarPedido([FromRoute] int id, [FromBody] PedidoEntity pedido)
         {
             _pedidosDal.AlterarPedido(id, pedido);
+            _pedidosDal.SalvarAlteracoes();
 
             return Ok();
         }
@@ -82,6 +85,7 @@ namespace ShopZilla.Pedidos.Api.Controllers
         public ActionResult DeletarPedido([FromRoute] int id) 
         {
             _pedidosDal.DeletarPedido(id);
+            _pedidosDal.SalvarAlteracoes();
 
             return Ok();
         }

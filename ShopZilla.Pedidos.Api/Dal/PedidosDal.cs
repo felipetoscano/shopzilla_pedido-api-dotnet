@@ -13,25 +13,31 @@ namespace ShopZilla.Pedidos.Api.Dal
         }
 
         public PedidoEntity[] BuscarPedidos() => _dbContext.Pedidos.ToArray();
+
         public PedidoEntity BuscarPedidoCompletoPorId(int id) => _dbContext.Pedidos.Include(p => p.Produtos).FirstOrDefault(p => p.Id == id);
+
         public void CriarPedido(PedidoEntity pedidoEntity) 
         {
             _dbContext.Pedidos.Add(pedidoEntity);
-            _dbContext.SaveChanges();
         } 
+
         public void AlterarPedido(int id, PedidoEntity pedidoEntity) 
         {
             pedidoEntity.Id = id;
 
             _dbContext.Pedidos.Update(pedidoEntity);
-            _dbContext.SaveChanges();
         }
+
         public void DeletarPedido(int id) 
         {
             var pedidoEntity = new PedidoEntity { Id = id };
 
             _dbContext.Pedidos.Remove(pedidoEntity);
-            _dbContext.SaveChanges();
         } 
+
+        public void SalvarAlteracoes()
+        {
+            _dbContext.SaveChanges();
+        }
     }
 }
