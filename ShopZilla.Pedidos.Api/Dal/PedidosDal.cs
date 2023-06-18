@@ -18,19 +18,19 @@ namespace ShopZilla.Pedidos.Api.Dal
 
         public void CriarPedido(PedidoEntity pedidoEntity) => _dbContext.Pedidos.Add(pedidoEntity);
 
-        public void AlterarPedido(int id, PedidoEntity pedidoEntity) 
+        public void AlterarPedido(int id, PedidoEntity pedidoEntity)
         {
             pedidoEntity.Id = id;
 
             _dbContext.Pedidos.Update(pedidoEntity);
         }
 
-        public void DeletarPedido(int id) 
+        public void DeletarPedido(int id)
         {
             var pedidoEntity = new PedidoEntity { Id = id };
 
             _dbContext.Pedidos.Remove(pedidoEntity);
-        } 
+        }
 
         public void SalvarAlteracoes() => _dbContext.SaveChanges();
     }

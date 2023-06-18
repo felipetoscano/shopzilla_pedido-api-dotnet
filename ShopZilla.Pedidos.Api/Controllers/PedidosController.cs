@@ -82,7 +82,7 @@ namespace ShopZilla.Pedidos.Api.Controllers
         /// <param name="id">Id do pedido</param>
         /// <returns></returns>
         [HttpDelete("{id}")]
-        public ActionResult DeletarPedido([FromRoute] int id) 
+        public ActionResult DeletarPedido([FromRoute] int id)
         {
             _pedidosDal.DeletarPedido(id);
             _pedidosDal.SalvarAlteracoes();

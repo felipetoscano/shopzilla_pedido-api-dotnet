@@ -14,7 +14,7 @@ namespace ShopZilla.Pedidos.Api.Pedidos
 
         public PedidoEntity Processar(PedidoEntity pedido)
         {
-            if(pedido.Status == Status.APROVADO)
+            if (pedido.Status == Status.APROVADO)
             {
                 pedido.Status = Status.ENTREGAR;
                 return pedido;

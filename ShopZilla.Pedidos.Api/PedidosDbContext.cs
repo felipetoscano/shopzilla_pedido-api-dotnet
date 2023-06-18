@@ -18,6 +18,6 @@ namespace ShopZilla.Pedidos.Api
                 .WithOne(e => e.Pedido)
                 .HasForeignKey(e => e.IdPedido)
                 .HasPrincipalKey(e => e.Id);
-        }  
+        }
     }
 }

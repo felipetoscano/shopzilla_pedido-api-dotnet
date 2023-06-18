@@ -28,7 +28,7 @@ namespace ShopZilla.Pedidos.Api.Controllers
         {
             var usuarioVerificado = _usuariosDal.BuscarPorLoginESenha(usuario.Login, usuario.Senha);
 
-            if(usuarioVerificado == null)
+            if (usuarioVerificado == null)
             {
                 return NotFound("Usuário não encontrado");
             }

@@ -14,7 +14,7 @@ namespace ShopZilla.Pedidos.Api.Pedidos
 
         public PedidoEntity Processar(PedidoEntity pedido)
         {
-            if(pedido.Status == Status.RECUSADO)
+            if (pedido.Status == Status.RECUSADO)
             {
                 pedido.Status = Status.CANCELADO;
                 return pedido;

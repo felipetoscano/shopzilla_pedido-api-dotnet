@@ -13,7 +13,7 @@ namespace ShopZilla.Pedidos.Api.Services
 
         public TokenService(JwtSettings jwtSettings)
         {
-            _jwtSettings = jwtSettings; 
+            _jwtSettings = jwtSettings;
         }
 
         public string GerarTokenDoUsuario(UsuarioEntity usuario)
