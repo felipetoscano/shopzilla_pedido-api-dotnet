@@ -14,12 +14,9 @@ namespace ShopZilla.Pedidos.Api.Services
             _connectionStrings = connectionStrings;
         }
 
-        public async void AdicionarPedido(PedidoEntity pedido)
+        public async void AdicionarTopicoNovoPedido(PedidoEntity pedido)
         {
-            var config = new ProducerConfig 
-            { 
-                BootstrapServers = _connectionStrings.Kafka
-            };
+            var config = ObterConfiguracaoConsumidor();
 
             using (var producer = new ProducerBuilder<Null, string>(config).Build())
             {
@@ -36,6 +33,14 @@ namespace ShopZilla.Pedidos.Api.Services
                     Console.WriteLine($"Erro no envio: {e.Error.Reason}");
                 }
             }
+        }
+
+        private ConsumerConfig ObterConfiguracaoConsumidor()
+        {
+            return new ConsumerConfig
+            {
+                BootstrapServers = _connectionStrings.Kafka
+            };
         }
     }
 }

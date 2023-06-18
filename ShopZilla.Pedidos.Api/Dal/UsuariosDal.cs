@@ -11,9 +11,6 @@ namespace ShopZilla.Pedidos.Api.Dal
             _dbContext = dbContext;
         }
 
-        public UsuarioEntity BuscarPorLoginESenha(string login, string senha)
-        {
-            return _dbContext.Usuarios.FirstOrDefault(usuario => usuario.Login == login && usuario.Senha == senha);
-        }
+        public UsuarioEntity BuscarPorLoginESenha(string login, string senha) => _dbContext.Usuarios.FirstOrDefault(usuario => usuario.Login == login && usuario.Senha == senha);
     }
 }

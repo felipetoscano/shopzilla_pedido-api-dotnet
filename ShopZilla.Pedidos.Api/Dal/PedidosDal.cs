@@ -16,10 +16,7 @@ namespace ShopZilla.Pedidos.Api.Dal
 
         public PedidoEntity BuscarPedidoCompletoPorId(int id) => _dbContext.Pedidos.Include(p => p.Produtos).FirstOrDefault(p => p.Id == id);
 
-        public void CriarPedido(PedidoEntity pedidoEntity) 
-        {
-            _dbContext.Pedidos.Add(pedidoEntity);
-        } 
+        public void CriarPedido(PedidoEntity pedidoEntity) => _dbContext.Pedidos.Add(pedidoEntity);
 
         public void AlterarPedido(int id, PedidoEntity pedidoEntity) 
         {
@@ -35,9 +32,6 @@ namespace ShopZilla.Pedidos.Api.Dal
             _dbContext.Pedidos.Remove(pedidoEntity);
         } 
 
-        public void SalvarAlteracoes()
-        {
-            _dbContext.SaveChanges();
-        }
+        public void SalvarAlteracoes() => _dbContext.SaveChanges();
     }
 }

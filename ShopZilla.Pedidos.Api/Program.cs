@@ -112,6 +112,7 @@ void AdicionarInjecaoDeDependencias()
 {
     builder.Services.AddDbContext<PedidosDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("PedidosDb")));
     builder.Services.AddSingleton(builder.Configuration.GetSection(nameof(JwtSettings)).Get<JwtSettings>());
+    builder.Services.AddSingleton(builder.Configuration.GetSection(nameof(KafkaSettings)).Get<KafkaSettings>());
     builder.Services.AddSingleton(builder.Configuration.GetSection(nameof(ConnectionStrings)).Get<ConnectionStrings>());
     builder.Services.AddSingleton<TokenService>();
     builder.Services.AddScoped<PedidosDal>();

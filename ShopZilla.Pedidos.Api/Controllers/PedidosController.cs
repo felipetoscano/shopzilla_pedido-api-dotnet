@@ -56,7 +56,7 @@ namespace ShopZilla.Pedidos.Api.Controllers
             _pedidosDal.CriarPedido(pedido);
             _pedidosDal.SalvarAlteracoes();
 
-            _kafkaService.AdicionarPedido(pedido);
+            _kafkaService.AdicionarTopicoNovoPedido(pedido);
 
             return Ok();
         }
