@@ -8,23 +8,23 @@ namespace ShopZilla.Pedidos.Api.Services
     public class KafkaProducerService
     {
         private readonly ConnectionStrings _connectionStrings;
+        private readonly KafkaSettings _kafkaSettings;
 
-        public KafkaProducerService(ConnectionStrings connectionStrings)
+        public KafkaProducerService(ConnectionStrings connectionStrings, KafkaSettings kafkaSettings)
         {
             _connectionStrings = connectionStrings;
+            _kafkaSettings = kafkaSettings;
         }
 
         public async void AdicionarTopicoNovoPedido(PedidoEntity pedido)
         {
             var config = ObterConfiguracaoConsumidor();
 
-            using (var producer = new ProducerBuilder<Null, string>(config).Build())
+            using (var produtor = new ProducerBuilder<Null, string>(config).Build())
             {
                 try
                 {
-                    var pedidoSerializado = JsonSerializer.Serialize(pedido);
-                    var mensagem = new Message<Null, string>() { Value = pedidoSerializado };
-                    var response = await producer.ProduceAsync("NOVO_PEDIDO", mensagem);
+                    await EnviarPedidoTopicoNovoPedido(pedido, produtor);
 
                     Console.WriteLine("Registro da fila adicionado com sucesso");
                 }
@@ -41,6 +41,13 @@ namespace ShopZilla.Pedidos.Api.Services
             {
                 BootstrapServers = _connectionStrings.Kafka
             };
+        }
+
+        private Task EnviarPedidoTopicoNovoPedido(PedidoEntity pedido, IProducer<Null, string> produtor)
+        {
+            var pedidoSerializado = JsonSerializer.Serialize(pedido);
+            var mensagem = new Message<Null, string>() { Value = pedidoSerializado };
+            return produtor.ProduceAsync(_kafkaSettings.Topics.NovoPedido, mensagem);
         }
     }
 }

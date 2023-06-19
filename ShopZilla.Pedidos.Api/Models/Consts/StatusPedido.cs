@@ -1,6 +1,6 @@
 ﻿namespace ShopZilla.Pedidos.Api.Models.Consts
 {
-    public static class Status
+    public static class StatusPedido
     {
         public const string APROVADO = "APROVADO";
         public const string CANCELADO = "CANCELADO";

@@ -40,6 +40,7 @@ namespace ShopZilla.Pedidos.Api.Services.BackgroundServices
 
             try
             {
+                Console.WriteLine("Consumo iniciado");
                 CriarTarefaDeConsumoTopico(consumidor, cancellationToken);
             }
             catch (OperationCanceledException)
@@ -69,24 +70,27 @@ namespace ShopZilla.Pedidos.Api.Services.BackgroundServices
         {
             Task.Run(() =>
             {
-                Console.WriteLine("Consumo iniciado");
                 while (!cancellationToken.IsCancellationRequested)
                 {
                     var mensagem = consumidor.Consume(cancellationToken);
                     var pedido = JsonSerializer.Deserialize<PedidoEntity>(mensagem.Message.Value);
-
                     var pedidoProcessado = new ProcessadorPedidos().Processar(pedido);
 
-                    using (var scope = _serviceProvider.CreateScope())
-                    {
-                        var pedidosDal = scope.ServiceProvider.GetRequiredService<PedidosDal>();
-                        pedidosDal.AlterarPedido(pedidoProcessado.Id, pedidoProcessado);
-                        pedidosDal.SalvarAlteracoes();
-                    }
+                    AlterarPedido(pedidoProcessado);
 
                     Console.WriteLine("Registro da fila consumido com sucesso");
                 }
             }, CancellationToken.None);
+        }
+
+        private void AlterarPedido(PedidoEntity pedido)
+        {
+            using (var scope = _serviceProvider.CreateScope())
+            {
+                var pedidosDal = scope.ServiceProvider.GetRequiredService<PedidosDal>();
+                pedidosDal.AlterarPedido(pedido.Id, pedido);
+                pedidosDal.SalvarAlteracoes();
+            }
         }
     }
 }
