@@ -7,7 +7,6 @@
 	<GenerateDocumentationFile>true</GenerateDocumentationFile>
 	<NoWarn>$(NoWarn);1591</NoWarn>
 	<ContainerImageName>shopzilla-pedidos-api</ContainerImageName>
-	<PublishProfile>DefaultContainer</PublishProfile>
 	<ContainerImageTags>latest</ContainerImageTags>
 	<RuntimeIdentifier>linux-x64</RuntimeIdentifier>
   </PropertyGroup>
