@@ -8,7 +8,6 @@
 	<NoWarn>$(NoWarn);1591</NoWarn>
 	<ContainerImageName>shopzilla-pedidos-api</ContainerImageName>
 	<ContainerImageTags>latest</ContainerImageTags>
-	<RuntimeIdentifier>linux-x64</RuntimeIdentifier>
   </PropertyGroup>
 
   <ItemGroup>
