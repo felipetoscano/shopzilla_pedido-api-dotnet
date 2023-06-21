@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace ShopZilla.Pedidos.Api.Services.BackgroundServices
 {
-    public class KafkaConsumerService : IHostedService
+    public class KafkaConsumerService : BackgroundService
     {
         private readonly ConnectionStrings _connectionStrings;
         private readonly KafkaSettings _kafkaSettings;
@@ -19,21 +19,7 @@ namespace ShopZilla.Pedidos.Api.Services.BackgroundServices
             _serviceProvider = serviceProvider;
         }
 
-        public Task StartAsync(CancellationToken cancellationToken)
-        {
-            ConsumirTopicoConfirmacaoPedido(cancellationToken);
-
-            return Task.CompletedTask;
-        }
-
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            Console.WriteLine("Fila parou");
-
-            return Task.CompletedTask;
-        }
-
-        private void ConsumirTopicoConfirmacaoPedido(CancellationToken cancellationToken)
+        protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
             var config = ObterConfiguracaoConsumidor();
             var consumidor = ObterConsumidorTopicoConfirmacaoPedido(config);
@@ -41,11 +27,14 @@ namespace ShopZilla.Pedidos.Api.Services.BackgroundServices
             try
             {
                 Console.WriteLine("Consumo iniciado");
-                CriarTarefaDeConsumoTopico(consumidor, cancellationToken);
+
+                return ObterTarefaConsumoTopicoConfirmacaoPedido(consumidor, stoppingToken);
             }
             catch (OperationCanceledException)
             {
                 consumidor.Close();
+
+                throw;
             }
         }
 
@@ -66,9 +55,9 @@ namespace ShopZilla.Pedidos.Api.Services.BackgroundServices
             return consumidor;
         }
 
-        private void CriarTarefaDeConsumoTopico(IConsumer<Ignore, string> consumidor, CancellationToken cancellationToken)
+        private Task ObterTarefaConsumoTopicoConfirmacaoPedido(IConsumer<Ignore, string> consumidor, CancellationToken cancellationToken)
         {
-            Task.Run(() =>
+            return Task.Run(() =>
             {
                 while (!cancellationToken.IsCancellationRequested)
                 {
