@@ -110,7 +110,10 @@ void AdicionarControllersConfigurado()
 
 void AdicionarInjecaoDeDependencias()
 {
-    builder.Services.AddDbContext<PedidosDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("PedidosDb")));
+    var dbConn = builder.Configuration.GetConnectionString("PedidosDb");
+    Console.WriteLine(dbConn);
+
+    builder.Services.AddDbContext<PedidosDbContext>(options => options.UseSqlServer(dbConn));
     builder.Services.AddSingleton(builder.Configuration.GetSection(nameof(JwtSettings)).Get<JwtSettings>());
     builder.Services.AddSingleton(builder.Configuration.GetSection(nameof(KafkaSettings)).Get<KafkaSettings>());
     builder.Services.AddSingleton(builder.Configuration.GetSection(nameof(ConnectionStrings)).Get<ConnectionStrings>());
